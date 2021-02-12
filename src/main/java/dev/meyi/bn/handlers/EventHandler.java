@@ -5,12 +5,10 @@ import dev.meyi.bn.utilities.Utils;
 import java.math.BigDecimal;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.util.StringUtils;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.client.event.GuiScreenEvent.BackgroundDrawnEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
@@ -117,23 +115,25 @@ public class EventHandler {
 
   @SubscribeEvent
   public void menuOpenedEvent(GuiOpenEvent e) {
-    if (e.gui instanceof GuiChest && (BazaarNotifier.validApiKey || BazaarNotifier.apiKeyDisabled)
-        && ((((GuiChest) e.gui).lowerChestInventory.hasCustomName() && (Utils
-        .stripString(((GuiChest) e.gui).lowerChestInventory.getDisplayName().getUnformattedText())
-        .startsWith("Bazaar") || Utils
-        .stripString(((GuiChest) e.gui).lowerChestInventory.getDisplayName().getUnformattedText())
-        .equalsIgnoreCase("How much do you want to pay?") || Utils
-        .stripString(((GuiChest) e.gui).lowerChestInventory.getDisplayName().getUnformattedText())
-        .matches("Confirm (Buy|Sell) (Order|Offer)")) || Utils
-        .stripString(((GuiChest) e.gui).lowerChestInventory.getDisplayName().getUnformattedText())
-        .contains("Bazaar")) || BazaarNotifier.forceRender)) {
-      if (!BazaarNotifier.inBazaar) {
-        BazaarNotifier.inBazaar = true;
+    boolean inBazaar = false;
+
+    if (e.gui instanceof GuiChest && (BazaarNotifier.validApiKey || BazaarNotifier.apiKeyDisabled)) {
+      if (BazaarNotifier.forceRenderTestMode) {
+        inBazaar = true;
+      } else {
+        IInventory lowerChestInventory = ((GuiChest) e.gui).lowerChestInventory;
+        if (lowerChestInventory.hasCustomName()) {
+          String displayName = Utils.stripString(lowerChestInventory.getDisplayName().getUnformattedText());
+          if (displayName.contains("Bazaar") ||
+                  displayName.equalsIgnoreCase("How much do you want to pay?") ||
+                  displayName.matches("Confirm (Buy|Sell) (Order|Offer)")) {
+            inBazaar = true;
+          }
+        }
       }
     }
-    if (e.gui == null && BazaarNotifier.inBazaar) {
-      BazaarNotifier.inBazaar = false;
-    }
+
+    BazaarNotifier.inBazaar = inBazaar;
   }
 
   @SubscribeEvent

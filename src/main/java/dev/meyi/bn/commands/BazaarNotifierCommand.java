@@ -130,10 +130,10 @@ public class BazaarNotifierCommand extends CommandBase {
           }
         }
       } else if (args.length == 1 && args[0].equalsIgnoreCase("__force")) {
-        BazaarNotifier.forceRender ^= true;
+        BazaarNotifier.forceRenderTestMode ^= true;
         player.addChatMessage(new ChatComponentText(BazaarNotifier.prefix + EnumChatFormatting.RED
             + "This command is intended for testing purposes only, use it at your own peril. Forced rendering has been turned "
-            + EnumChatFormatting.DARK_RED + (BazaarNotifier.forceRender ? "on" : "off")));
+            + EnumChatFormatting.DARK_RED + (BazaarNotifier.forceRenderTestMode ? "on" : "off")));
       } else if (args.length == 1 && args[0].equalsIgnoreCase("discord")) {
         ChatComponentText discordLink = new ChatComponentText(
             EnumChatFormatting.DARK_GREEN + "" + EnumChatFormatting.BOLD
