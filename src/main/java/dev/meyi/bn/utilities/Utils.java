@@ -145,6 +145,10 @@ public class Utils {
   }
 
   public static boolean validateApiKey() throws IOException {
+    if (BazaarNotifier.apiKey == null || BazaarNotifier.apiKey.isEmpty()) {
+      return false;
+    }
+
     return new JSONObject(IOUtils.toString(new BufferedReader
         (new InputStreamReader(
             HttpClientBuilder.create().build().execute(new HttpGet(
