@@ -135,6 +135,13 @@ public class BazaarNotifierCommand extends CommandBase {
       return;
     }
 
+    if (BazaarNotifier.bazaarCache.length() == 0) {
+      player.addChatMessage(new ChatComponentText(
+              BazaarNotifier.prefix + EnumChatFormatting.RED
+                      + "Please wait a moment for the mod to get bazaar information"));
+      return;
+    }
+
     String item = String.join(" ", args).substring(5).toLowerCase();
     if (BazaarNotifier.bazaarCache.has(item)) {
       JSONObject data = BazaarNotifier.bazaarCache.getJSONObject(item);
@@ -150,10 +157,6 @@ public class BazaarNotifierCommand extends CommandBase {
               BazaarNotifier.df.format(data.getDouble("profitFlowPerMinute")) + "\n");
       sb.append(BazaarNotifier.prefix);
       player.addChatMessage(new ChatComponentText(sb.toString()));
-    } else if (BazaarNotifier.bazaarCache.length() == 0) {
-      player.addChatMessage(new ChatComponentText(
-          BazaarNotifier.prefix + EnumChatFormatting.RED
-              + "Please wait a moment for the mod to get bazaar information"));
     } else {
       player.addChatMessage(new ChatComponentText(
           BazaarNotifier.prefix + EnumChatFormatting.RED
