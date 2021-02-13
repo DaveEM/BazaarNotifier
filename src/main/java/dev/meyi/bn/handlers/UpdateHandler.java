@@ -53,6 +53,10 @@ public class UpdateHandler {
     }
   }
 
+  /**
+   * Checks the current mod version against the version on GitHub.
+   * This method only works properly if the version contains three single digits separated by "."
+   */
   private void checkForModUpdateOnGitHub() {
     JSONObject json = new JSONObject(IOUtils.toString(new BufferedReader
         (new InputStreamReader(
