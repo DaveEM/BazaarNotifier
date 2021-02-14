@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StringUtils;
+import net.minecraftforge.common.util.Constants.NBT;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent.Phase;
@@ -20,7 +21,10 @@ import org.json.JSONObject;
 
 public class ChestTickHandler {
 
+  private static final int itemSlotInConfirmationChest = 13;
+
   public static String lastScreenDisplayName = "";
+
   // /blockdata x y z {CustomName:"___"} << For Custom Chest Name Testing
 
   @SubscribeEvent
@@ -36,7 +40,7 @@ public class ChestTickHandler {
           if (chestName.equals("confirm buy order") ||
               chestName.equals("confirm sell offer")) {
 
-            if (chest.getStackInSlot(13) != null) {
+            if (chest.getStackInSlot(itemSlotInConfirmationChest) != null) {
               lastScreenDisplayName = Utils.stripString(chest.getDisplayName().getUnformattedText());
               orderConfirmation(chest);
             }
@@ -148,17 +152,20 @@ public class ChestTickHandler {
     }
   }
 
+  /**
+   * Handle order confirmation screen
+   * @param chest The chest containing a buy or sell item with price per unit, quantity, and total price
+   */
   private void orderConfirmation(IInventory chest) {
 
-    if (chest.getStackInSlot(13) != null) {
+    if (chest.getStackInSlot(itemSlotInConfirmationChest) != null) {
+
+      NBTTagList itemLoreTagList = chest.getStackInSlot(itemSlotInConfirmationChest).getTagCompound()
+              .getCompoundTag("display").getTagList("Lore", NBT.TAG_STRING);
 
       double price = Double.parseDouble(StringUtils.stripControlCodes(
-          chest.getStackInSlot(13).getTagCompound().getCompoundTag("display")
-              .getTagList("Lore", 8).getStringTagAt(2)).split(" ")[3].replaceAll(",", ""));
-
-      String product = StringUtils.stripControlCodes(
-          chest.getStackInSlot(13).getTagCompound().getCompoundTag("display")
-              .getTagList("Lore", 8).getStringTagAt(4)).split("x ")[1];
+              itemLoreTagList.getStringTagAt(2)).split(" ")[3].replaceAll(",", ""));
+      String product = StringUtils.stripControlCodes(itemLoreTagList.getStringTagAt(4)).split("x ")[1];
 
       if (!BazaarNotifier.bazaarConversionsReversed
           .has(product)) {
@@ -169,13 +176,10 @@ public class ChestTickHandler {
       } else {
         String productName = BazaarNotifier.bazaarConversionsReversed
             .getString(product);
-        String productWithAmount = StringUtils.stripControlCodes(
-            chest.getStackInSlot(13).getTagCompound().getCompoundTag("display")
-                .getTagList("Lore", 8).getStringTagAt(4)).split(": ")[1];
+        String productWithAmount = StringUtils.stripControlCodes(itemLoreTagList.getStringTagAt(4)).split(": ")[1];
 
         int amount = Integer.parseInt(StringUtils.stripControlCodes(
-            chest.getStackInSlot(13).getTagCompound().getCompoundTag("display")
-                .getTagList("Lore", 8).getStringTagAt(4)).split(": ")[1].split("x ")[0]
+                itemLoreTagList.getStringTagAt(4)).split(": ")[1].split("x ")[0]
             .replaceAll(",", ""));
 
         EventHandler.productVerify[0] = productName;

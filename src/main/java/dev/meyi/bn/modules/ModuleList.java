@@ -58,6 +58,12 @@ public class ModuleList extends ArrayList<Module> {
     }
   }
 
+  /**
+   * Checks if the left mouse button has been pressed within the bounds of any module and handles mouse
+   * movement for that module until the left mouse button is no longer down.
+   * NOTE: If the left mouse button is first pressed outside a module then moved into a module's bounds then
+   *       future mouse movement will result in the movement of that module.
+   */
   public void movementCheck() {
     if (Mouse.isButtonDown(0)) {
       if (movingModule == null) {
