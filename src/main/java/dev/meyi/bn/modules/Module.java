@@ -60,7 +60,7 @@ public abstract class Module {
         && getMouseCoordinateY() <= boundsY);
   }
 
-  public JSONObject generateModuleConfig() {
+  public JSONObject getCurrentModuleConfig() {
     JSONObject config = new JSONObject();
     config.put("x", x).put("y", y).put("name", name());
     return config;

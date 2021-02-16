@@ -2,6 +2,8 @@ package dev.meyi.bn.utilities;
 
 import dev.meyi.bn.BazaarNotifier;
 import java.util.Iterator;
+
+import dev.meyi.bn.HypixelApiWrapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -9,7 +11,7 @@ public class Suggester {
 
   public static void basic() {
     try {
-      if (BazaarNotifier.validApiKey || BazaarNotifier.apiKeyDisabled) {
+      if (HypixelApiWrapper.isBazaarApiAvailable()) {
         JSONObject bazaarData = BazaarNotifier.bazaarDataRaw;
         Iterator<String> bazaarKeys = bazaarData.keys();
         JSONArray bazaarDataFormatted = new JSONArray();
@@ -63,6 +65,9 @@ public class Suggester {
 
         BazaarNotifier.bazaarCache = bazaarCache;
         BazaarNotifier.bazaarDataFormatted = bazaarDataFormatted;
+      } else {
+        // TODO: Show that the Bazaar API is not available - not critical currently since availability is
+        //       hard-coded to true
       }
     } catch (Exception e) {
       e.printStackTrace();

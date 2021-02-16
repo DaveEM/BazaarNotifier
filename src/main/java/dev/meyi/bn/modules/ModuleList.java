@@ -1,6 +1,7 @@
 package dev.meyi.bn.modules;
 
 import dev.meyi.bn.BazaarNotifier;
+import dev.meyi.bn.BazaarNotifierConfig;
 import dev.meyi.bn.utilities.Utils;
 import java.util.ArrayList;
 import org.json.JSONArray;
@@ -12,20 +13,8 @@ public class ModuleList extends ArrayList<Module> {
 
   Module movingModule = null;
 
-  public ModuleList() {
-    this(Utils.initializeConfig());
-  }
-
   public ModuleList(JSONObject config) {
-    BazaarNotifier.apiKey = config.getString("api");
-    JSONObject workingConfig;
-    if (!config.getString("version").equalsIgnoreCase(BazaarNotifier.VERSION)) {
-      workingConfig = Utils.initializeConfig();
-    } else {
-      workingConfig = config;
-    }
-
-    JSONArray modules = workingConfig.getJSONArray("modules");
+    JSONArray modules = config.getJSONArray(BazaarNotifierConfig.MODULES_CONFIG_NAME);
 
     for (Object m : modules) {
       JSONObject module = (JSONObject) m;
@@ -117,14 +106,12 @@ public class ModuleList extends ArrayList<Module> {
     }
   }
 
-  public JSONObject generateConfig() {
-    JSONObject o = new JSONObject().put("api", BazaarNotifier.apiKey)
-        .put("version", BazaarNotifier.VERSION);
-
-    JSONArray modules = new JSONArray();
+  public JSONArray getCurrentModuleConfigs() {
+    JSONArray moduleConfigs = new JSONArray();
     for (Module m : this) {
-      modules.put(m.generateModuleConfig());
+      moduleConfigs.put(m.getCurrentModuleConfig());
     }
-    return o.put("modules", modules);
+
+    return moduleConfigs;
   }
 }

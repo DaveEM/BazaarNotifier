@@ -73,7 +73,7 @@ public class SuggestionModule extends Module {
   }
 
   @Override
-  public JSONObject generateModuleConfig() {
-    return super.generateModuleConfig();
+  public JSONObject getCurrentModuleConfig() {
+    return super.getCurrentModuleConfig();
   }
 }

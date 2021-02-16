@@ -41,7 +41,7 @@ public class NotificationModule extends Module {
                 : new Color(0x55FFFF);
 
         String notification = currentOrder.getBoolean("goodOrder") ? "BEST" :
-            currentOrder.getBoolean("matchedOrder") ? "MATCHED" : "OUTDATED";
+            currentOrder.getBoolean("matchedOrder") ? "MATCHED" : "OUTBID";
         message.put(WordUtils.capitalizeFully(currentOrder.getString("type")), typeSpecificColor);
         message.put(" - ", new Color(0xAAAAAA));
         message.put(notification + " ", new Color(0xFFFF55));

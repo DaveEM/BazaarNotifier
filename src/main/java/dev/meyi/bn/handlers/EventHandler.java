@@ -1,6 +1,7 @@
 package dev.meyi.bn.handlers;
 
 import dev.meyi.bn.BazaarNotifier;
+import dev.meyi.bn.HypixelApiWrapper;
 import dev.meyi.bn.utilities.Utils;
 import java.math.BigDecimal;
 import net.minecraft.client.Minecraft;
@@ -116,25 +117,27 @@ public class EventHandler {
 
   @SubscribeEvent
   public void menuOpenedEvent(GuiOpenEvent e) {
-    boolean inBazaar = false;
+    boolean inBazaarValue = false;
 
-    if (e.gui instanceof GuiChest && (BazaarNotifier.validApiKey || BazaarNotifier.apiKeyDisabled)) {
+    if (e.gui instanceof GuiChest && (HypixelApiWrapper.isBazaarApiAvailable())) {
       if (BazaarNotifier.forceRenderTestMode) {
-        inBazaar = true;
+        inBazaarValue = true;
       } else {
         IInventory lowerChestInventory = ((GuiChest) e.gui).lowerChestInventory;
         if (lowerChestInventory.hasCustomName()) {
           String displayName = Utils.stripString(lowerChestInventory.getDisplayName().getUnformattedText());
+          // TODO: Detect product type selections screen (e.g. Mining -> Pumpkin)
+          // TODO: Detect buy / sell screen for product (
           if (displayName.contains("Bazaar") ||
                   displayName.equalsIgnoreCase("How much do you want to pay?") ||
                   displayName.matches("Confirm (Buy|Sell) (Order|Offer)")) {
-            inBazaar = true;
+            inBazaarValue = true;
           }
         }
       }
     }
 
-    BazaarNotifier.inBazaar = inBazaar;
+    BazaarNotifier.inBazaar = inBazaarValue;
   }
 
   @SubscribeEvent

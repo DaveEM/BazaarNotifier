@@ -1,12 +1,15 @@
 package dev.meyi.bn.handlers;
 
 import dev.meyi.bn.BazaarNotifier;
-import dev.meyi.bn.utilities.Utils;
+import dev.meyi.bn.BazaarNotifierConfig;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+
+import dev.meyi.bn.HypixelApiWrapper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.ClickEvent.Action;
@@ -19,7 +22,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.json.JSONObject;
 
-public class UpdateHandler {
+public class PlayerJoinHandler {
 
   boolean firstJoin = true;
 
@@ -36,20 +39,11 @@ public class UpdateHandler {
       new ScheduledThreadPoolExecutor(1).schedule(() -> {
         try {
           checkForModUpdateOnGitHub();
-          checkForValidHypixelApiKey();
+          HypixelApiWrapper.setPrivateApiKey(BazaarNotifierConfig.privateApiKey);
         } catch (IOException e) {
           e.printStackTrace();
         }
       }, 3, TimeUnit.SECONDS);
-    }
-  }
-
-  private void checkForValidHypixelApiKey() throws IOException {
-    BazaarNotifier.validApiKey = Utils.validateApiKey();
-    if (!BazaarNotifier.validApiKey && !BazaarNotifier.apiKeyDisabled) {
-      Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(
-          BazaarNotifier.prefix + EnumChatFormatting.RED
-              + "The mod doesn't have access to a valid api key yet. Please run /bn api (key) to set your key"));
     }
   }
 

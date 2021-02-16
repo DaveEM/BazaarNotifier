@@ -5,6 +5,8 @@ import dev.meyi.bn.utilities.Utils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.IInventory;
@@ -34,21 +36,22 @@ public class ChestTickHandler {
 
         IInventory chest = ((GuiChest) Minecraft.getMinecraft().currentScreen).lowerChestInventory;
         String chestName = Utils
-            .stripString(chest.getDisplayName().getUnformattedText().toLowerCase());
+            .stripString(chest.getDisplayName().getUnformattedText());
+        String chestNameLowerCase = chestName.toLowerCase();
 
-        if (chest.hasCustomName() && !lastScreenDisplayName.equalsIgnoreCase(chestName)) {
-          if (chestName.equals("confirm buy order") ||
-              chestName.equals("confirm sell offer")) {
+        if (chest.hasCustomName() && !lastScreenDisplayName.equals(chestName)) {
+          if (chestNameLowerCase.equals("confirm buy order") ||
+                  chestNameLowerCase.equals("confirm sell offer")) {
 
             if (chest.getStackInSlot(itemSlotInConfirmationChest) != null) {
-              lastScreenDisplayName = Utils.stripString(chest.getDisplayName().getUnformattedText());
+              lastScreenDisplayName = chestName;
               orderConfirmation(chest);
             }
 
-          } else if (chestName.contains("bazaar orders")) {
+          } else if (chestNameLowerCase.contains("bazaar orders")) {
             if (chest.getStackInSlot(chest.getSizeInventory()-5) != null
                 && Item.itemRegistry.getIDForObject(chest.getStackInSlot(chest.getSizeInventory()-5).getItem()) == 262) {
-              lastScreenDisplayName = Utils.stripString(chest.getDisplayName().getUnformattedText());
+              lastScreenDisplayName = chestName;
               updateBazaarOrders(chest);
             }
           }

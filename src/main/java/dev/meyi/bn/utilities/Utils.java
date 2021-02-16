@@ -30,23 +30,6 @@ import org.json.JSONObject;
 
 public class Utils {
 
-  public static JSONObject getBazaarData() throws IOException {
-    HttpClient client = HttpClientBuilder.create().build();
-    String apiBit = "";
-    if (!BazaarNotifier.apiKeyDisabled) {
-      apiBit = "?key=" + BazaarNotifier.apiKey;
-    }
-    HttpGet request = new HttpGet(
-        "https://api.hypixel.net/skyblock/bazaar" + apiBit);
-    HttpResponse response = client.execute(request);
-
-    String result = IOUtils.toString(new BufferedReader
-        (new InputStreamReader(
-            response.getEntity().getContent())));
-
-    return new JSONObject(result).getJSONObject("products");
-  }
-
   public static String stripString(String s) {
     char[] nonValidatedString = StringUtils.stripControlCodes(s).toCharArray();
     StringBuilder validated = new StringBuilder();
@@ -91,19 +74,6 @@ public class Utils {
     return bd.doubleValue();
   }
 
-  @SuppressWarnings("ResultOfMethodCallIgnored")
-  public static void saveConfigFile(File configFile, String toSave) {
-    try {
-      if (!configFile.isFile()) {
-        configFile.createNewFile();
-      }
-      Files.write(Paths.get(configFile.getAbsolutePath()),
-          toSave.getBytes(StandardCharsets.UTF_8));
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-  }
-
   public static JSONArray sortJSONArray(JSONArray jsonArr, String key) {
     List<JSONObject> jsonValues = new ArrayList<JSONObject>();
     for (int i = 0; i < jsonArr.length(); i++) {
@@ -125,37 +95,6 @@ public class Utils {
     }
     return true;
   }
-
-  public static JSONObject initializeConfig() {
-    JSONObject newConfig = new JSONObject().put("api", BazaarNotifier.apiKey)
-        .put("version", BazaarNotifier.VERSION);
-
-    JSONArray modules = new JSONArray();
-
-    for (ModuleName value : ModuleName.values()) {
-      Module m = value.returnDefaultModule();
-      if (m != null) {
-        modules.put(m.generateModuleConfig());
-      }
-    }
-
-    BazaarNotifier.validApiKey = false;
-
-    return newConfig.put("modules", modules);
-  }
-
-  public static boolean validateApiKey() throws IOException {
-    if (BazaarNotifier.apiKey == null || BazaarNotifier.apiKey.isEmpty()) {
-      return false;
-    }
-
-    return new JSONObject(IOUtils.toString(new BufferedReader
-        (new InputStreamReader(
-            HttpClientBuilder.create().build().execute(new HttpGet(
-                "https://api.hypixel.net/key?key=" + BazaarNotifier.apiKey)).getEntity()
-                .getContent())))).getBoolean("success");
-  }
-
 
   /**
    * @param key order key

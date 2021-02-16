@@ -3,6 +3,8 @@ package dev.meyi.bn.utilities;
 import dev.meyi.bn.BazaarNotifier;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+
+import dev.meyi.bn.HypixelApiWrapper;
 import net.minecraft.client.Minecraft;
 import org.json.JSONObject;
 
@@ -33,8 +35,8 @@ public class ScheduledEvents {
       if (!inOutdatedRequest) {
         inOutdatedRequest = true;
         try {
-          if (BazaarNotifier.activeBazaar && (BazaarNotifier.validApiKey || BazaarNotifier.apiKeyDisabled)) {
-            BazaarNotifier.bazaarDataRaw = Utils.getBazaarData();
+          if (HypixelApiWrapper.isBazaarApiAvailable()) {
+            BazaarNotifier.bazaarDataRaw = HypixelApiWrapper.getBazaarData();
             if (BazaarNotifier.orders.length() > 0) {
               for (int i = 0; i < BazaarNotifier.orders.length(); i++) {
                 JSONObject currentOrder = BazaarNotifier.orders.getJSONObject(i);

@@ -1,9 +1,10 @@
 package dev.meyi.bn.commands;
 
 import dev.meyi.bn.BazaarNotifier;
+import dev.meyi.bn.BazaarNotifierConfig;
+import dev.meyi.bn.HypixelApiWrapper;
 import dev.meyi.bn.utilities.Defaults;
-import dev.meyi.bn.utilities.Utils;
-import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -52,7 +53,7 @@ public class BazaarNotifierCommand extends CommandBase {
       String command = args[0].toLowerCase(Locale.ROOT);
       switch (command) {
         case "api":
-          doApiCommand(player, args);
+          doApiKeyCommand(player, args);
           break;
         case "discord":
           doDiscordCommand(player, args);
@@ -65,9 +66,6 @@ public class BazaarNotifierCommand extends CommandBase {
           break;
         case "reset":
           doResetCommand(player, args);
-          break;
-        case "toggle":
-          doToggleCommand(player, args);
           break;
         case "__force":
           doForceRenderTestModeCommand(player, args);
@@ -90,7 +88,6 @@ public class BazaarNotifierCommand extends CommandBase {
     sb.append(EnumChatFormatting.RED + "/bn dump\n");
     sb.append(EnumChatFormatting.RED + "/bn reset (orders)\n");
     sb.append(EnumChatFormatting.RED + "/bn api (key)\n\n");
-    sb.append(EnumChatFormatting.RED + "/bn toggle\n");
     sb.append(EnumChatFormatting.RED + "/bn find (item)\n");
     sb.append(EnumChatFormatting.RED + "/bn discord");
     sb.append(BazaarNotifier.prefix);
@@ -182,64 +179,29 @@ public class BazaarNotifierCommand extends CommandBase {
       return;
     }
 
-    // TODO: DaveEM - understand why println was here and if it can be deleted
-    //System.out.println(BazaarNotifier.orders);
     player.addChatMessage(new ChatComponentText(BazaarNotifier.prefix + EnumChatFormatting.RED
         + "Orders dumped to the log file"));
   }
 
-  private void doApiCommand(EntityPlayer player, String[] args)
+  private void doApiKeyCommand(EntityPlayer player, String[] args)
   {
     if (args.length != 2) {
       player.addChatMessage(new ChatComponentText(
               BazaarNotifier.prefix + EnumChatFormatting.RED
                       + "Run /bn api (key) to set your api key. Do /api if you need to get your api key."));
-      BazaarNotifier.validApiKey = false;
       return;
     }
 
-    BazaarNotifier.apiKey = args[1];
-    try {
-      if (Utils.validateApiKey()) {
-        player.addChatMessage(new ChatComponentText(
-                BazaarNotifier.prefix + EnumChatFormatting.RED
-                        + "Your api key has been set."));
-        BazaarNotifier.apiKey = "";
-        BazaarNotifier.validApiKey = true;
-        BazaarNotifier.activeBazaar = true;
-      } else {
-        player.addChatMessage(new ChatComponentText(
-                BazaarNotifier.prefix + EnumChatFormatting.RED
-                        + "Your api key is invalid. Please run /api new to get a fresh api key & use that in /bn api (key)"));
-        BazaarNotifier.validApiKey = false;
-      }
-    } catch (IOException e) {
+    String newApiKey = args[1];
+    if (HypixelApiWrapper.setPrivateApiKey(newApiKey)) {
+      BazaarNotifierConfig.privateApiKey = newApiKey;
       player.addChatMessage(new ChatComponentText(
               BazaarNotifier.prefix + EnumChatFormatting.RED
-                      + "An error occurred when trying to set your api key. Please re-run the command to try again."));
-      BazaarNotifier.validApiKey = false;
-      e.printStackTrace();
-    }
-  }
-
-  private void doToggleCommand(EntityPlayer player, String[] args)
-  {
-    if (args.length > 1) {
-      player.addChatMessage(new ChatComponentText("The toggle command does not have parameters"));
-      return;
-    }
-
-    if (BazaarNotifier.apiKey.equals("") && !BazaarNotifier.apiKeyDisabled) {
+                      + "Your api key has been set."));
+    } else {
       player.addChatMessage(new ChatComponentText(
               BazaarNotifier.prefix + EnumChatFormatting.RED
-                      + "Run /bn api (key) to set your api key. Do /api if you need to get your api key"));
-      return;
+                      + "The specified api key is invalid. Please run /api new to get a fresh api key & use that in /bn api (key). Your previous API key, if any was kept."));
     }
-
-    BazaarNotifier.orders = new JSONArray();
-    BazaarNotifier.activeBazaar ^= true;
-    player.addChatMessage(new ChatComponentText(
-            BazaarNotifier.prefix + EnumChatFormatting.RED + "The mod has been toggled "
-                    + EnumChatFormatting.DARK_RED + (BazaarNotifier.activeBazaar ? "on" : "off")));
   }
 }
