@@ -1,8 +1,8 @@
-package dev.meyi.bn.utilities;
+package dev.keebler408.bt.utilities;
 
-import dev.meyi.bn.BazaarNotifier;
-import dev.meyi.bn.modules.Module;
-import dev.meyi.bn.modules.ModuleName;
+import dev.keebler408.bt.BazaarTools;
+import dev.keebler408.bt.modules.Module;
+import dev.keebler408.bt.modules.ModuleName;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -33,8 +33,8 @@ public class Utils {
   public static JSONObject getBazaarData() throws IOException {
     HttpClient client = HttpClientBuilder.create().build();
     String apiBit = "";
-    if (!BazaarNotifier.apiKeyDisabled) {
-      apiBit = "?key=" + BazaarNotifier.apiKey;
+    if (!BazaarTools.apiKeyDisabled) {
+      apiBit = "?key=" + BazaarTools.apiKey;
     }
     HttpGet request = new HttpGet(
         "https://api.hypixel.net/skyblock/bazaar" + apiBit);
@@ -127,8 +127,8 @@ public class Utils {
   }
 
   public static JSONObject initializeConfig() {
-    JSONObject newConfig = new JSONObject().put("api", BazaarNotifier.apiKey)
-        .put("version", BazaarNotifier.VERSION);
+    JSONObject newConfig = new JSONObject().put("api", BazaarTools.apiKey)
+        .put("version", BazaarTools.VERSION);
 
     JSONArray modules = new JSONArray();
 
@@ -139,7 +139,7 @@ public class Utils {
       }
     }
 
-    BazaarNotifier.validApiKey = false;
+    BazaarTools.validApiKey = false;
 
     return newConfig.put("modules", modules);
   }
@@ -148,7 +148,7 @@ public class Utils {
     return new JSONObject(IOUtils.toString(new BufferedReader
         (new InputStreamReader(
             HttpClientBuilder.create().build().execute(new HttpGet(
-                "https://api.hypixel.net/key?key=" + BazaarNotifier.apiKey)).getEntity()
+                "https://api.hypixel.net/key?key=" + BazaarTools.apiKey)).getEntity()
                 .getContent())))).getBoolean("success");
   }
 
@@ -170,13 +170,13 @@ public class Utils {
     return new ChatComponentText(
         messageColor + type
             + EnumChatFormatting.GRAY + " for "
-            + messageColor + BazaarNotifier.dfNoDecimal
-            .format(BazaarNotifier.orders.getJSONObject(i).getInt("startAmount"))
+            + messageColor + BazaarTools.dfNoDecimal
+            .format(BazaarTools.orders.getJSONObject(i).getInt("startAmount"))
             + EnumChatFormatting.GRAY + "x " + messageColor
-            + BazaarNotifier.orders.getJSONObject(i).getString("product")
+            + BazaarTools.orders.getJSONObject(i).getString("product")
             + EnumChatFormatting.YELLOW
             + " " + notification + " " + EnumChatFormatting.GRAY + "("
-            + messageColor + BazaarNotifier.df.format(price)
+            + messageColor + BazaarTools.df.format(price)
             + EnumChatFormatting.GRAY + ")"
     );
   }

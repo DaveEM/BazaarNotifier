@@ -1,6 +1,6 @@
-package dev.meyi.bn.handlers;
+package dev.keebler408.bt.handlers;
 
-import dev.meyi.bn.BazaarNotifier;
+import dev.keebler408.bt.BazaarTools;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -12,11 +12,11 @@ public class MouseHandler {
   @SubscribeEvent
   public void mouseActionCheck(TickEvent e) {
     if (e.phase == TickEvent.Phase.START) {
-      if (BazaarNotifier.inBazaar) {
-        BazaarNotifier.modules.movementCheck();
+      if (BazaarTools.inBazaar) {
+        BazaarTools.modules.movementCheck();
         if (tick == 8 && !inPageFlip) { // 2.5 times per second
           inPageFlip = true;
-          BazaarNotifier.modules.pageFlipCheck();
+          BazaarTools.modules.pageFlipCheck();
           tick = 0;
           inPageFlip = false;
         }

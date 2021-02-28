@@ -1,13 +1,13 @@
 [
 {
-  "modid": "BazaarNotifier",
-  "name": "BazaarNotifier",
-  "description": "Notifies when your bazaar orders are outdated.",
+  "modid": "BazaarTools",
+  "name": "BazaarTools",
+  "description": "Various tools to help with Bazaar flipping.",
   "version": "${version}",
   "mcversion": "${mcversion}",
   "url": "",
   "updateUrl": "",
-  "authorList": ["meyi"],
+  "authorList": ["keebler408"],
   "credits": "",
   "logoFile": "",
   "screenshots": [],

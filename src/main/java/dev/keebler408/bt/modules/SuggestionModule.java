@@ -1,9 +1,9 @@
-package dev.meyi.bn.modules;
+package dev.keebler408.bt.modules;
 
-import dev.meyi.bn.BazaarNotifier;
-import dev.meyi.bn.utilities.ColorUtils;
-import dev.meyi.bn.utilities.Defaults;
-import dev.meyi.bn.utilities.Utils;
+import dev.keebler408.bt.BazaarTools;
+import dev.keebler408.bt.utilities.ColorUtils;
+import dev.keebler408.bt.utilities.Defaults;
+import dev.keebler408.bt.utilities.Utils;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -23,18 +23,18 @@ public class SuggestionModule extends Module {
 
   @Override
   protected void draw() {
-    if (BazaarNotifier.bazaarDataFormatted.length() != 0) {
+    if (BazaarTools.bazaarDataFormatted.length() != 0) {
       List<LinkedHashMap<String, Color>> items = new ArrayList<>();
 
       for (int i = shift; i < 10 + shift; i++) {
         LinkedHashMap<String, Color> message = new LinkedHashMap<>();
         message.put((i + 1) + ". ", Color.BLUE);
-        message.put(BazaarNotifier.bazaarDataFormatted.getJSONObject(i).getString("productId"),
+        message.put(BazaarTools.bazaarDataFormatted.getJSONObject(i).getString("productId"),
             Color.CYAN);
         message.put(" - ", Color.GRAY);
         message.put("EP: ", Color.RED);
-        message.put("" + BazaarNotifier.df.format(
-            BazaarNotifier.bazaarDataFormatted.getJSONObject(i)
+        message.put("" + BazaarTools.df.format(
+            BazaarTools.bazaarDataFormatted.getJSONObject(i)
                 .getDouble("profitFlowPerMinute")), Color.ORANGE);
         items.add(message);
       }
@@ -69,7 +69,7 @@ public class SuggestionModule extends Module {
 
   @Override
   protected int getMaxShift() {
-    return BazaarNotifier.bazaarDataFormatted.length() - 10;
+    return BazaarTools.bazaarDataFormatted.length() - 10;
   }
 
   @Override

@@ -1,7 +1,7 @@
-package dev.meyi.bn.handlers;
+package dev.keebler408.bt.handlers;
 
-import dev.meyi.bn.BazaarNotifier;
-import dev.meyi.bn.utilities.Utils;
+import dev.keebler408.bt.BazaarTools;
+import dev.keebler408.bt.utilities.Utils;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -26,7 +26,7 @@ public class ChestTickHandler {
   @SubscribeEvent
   public void onChestTick(TickEvent e) {
     if (e.phase == Phase.END) {
-      if (Minecraft.getMinecraft().currentScreen instanceof GuiChest && BazaarNotifier.inBazaar) {
+      if (Minecraft.getMinecraft().currentScreen instanceof GuiChest && BazaarTools.inBazaar) {
 
         IInventory chest = ((GuiChest) Minecraft.getMinecraft().currentScreen).lowerChestInventory;
         String chestName = Utils
@@ -54,7 +54,7 @@ public class ChestTickHandler {
   }
 
   public static void updateBazaarOrders(IInventory chest) {
-    int[] verifiedOrders = new int[BazaarNotifier.orders.length()];
+    int[] verifiedOrders = new int[BazaarTools.orders.length()];
     for (int i = 0; i < chest.getSizeInventory(); i++) {
       if (chest.getStackInSlot(i) != null
           && Item.itemRegistry.getIDForObject(chest.getStackInSlot(i).getItem()) != 160    // Glass
@@ -75,7 +75,7 @@ public class ChestTickHandler {
         String type = StringUtils.stripControlCodes(
             chest.getStackInSlot(i).getDisplayName().split(": ")[0].toLowerCase());
 
-        if (BazaarNotifier.bazaarConversionsReversed.has(displayName)) {
+        if (BazaarTools.bazaarConversionsReversed.has(displayName)) {
           int amountLeft = -1;
           double price;
           if (lore.get(4).toLowerCase().contains("expire")) {
@@ -92,8 +92,8 @@ public class ChestTickHandler {
                             .replaceAll(",", "").split(" ")[3]));
           }
           int orderInQuestion = -1;
-          for (int j = 0; j < BazaarNotifier.orders.length(); j++) {
-            JSONObject order = BazaarNotifier.orders.getJSONObject(j);
+          for (int j = 0; j < BazaarTools.orders.length(); j++) {
+            JSONObject order = BazaarTools.orders.getJSONObject(j);
             if (Double.compare(order.getDouble("pricePerUnit"), price) == 0 && type
                 .equals(order.getString("type"))) {
               orderInQuestion = j;
@@ -103,7 +103,7 @@ public class ChestTickHandler {
           if (orderInQuestion != -1) {
             verifiedOrders[orderInQuestion] = 1;
             boolean forceRemove = false;
-            int totalAmount = BazaarNotifier.orders.getJSONObject(orderInQuestion)
+            int totalAmount = BazaarTools.orders.getJSONObject(orderInQuestion)
                 .getInt("startAmount");
             if (lore.get(3).startsWith("Filled:")) {
               if (lore.get(3).split(" ")[2].equals("100%")) {
@@ -125,16 +125,16 @@ public class ChestTickHandler {
             }
             if (forceRemove) {
               Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(
-                  BazaarNotifier.prefix + EnumChatFormatting.RED
+                  BazaarTools.prefix + EnumChatFormatting.RED
                       + "Because of the limitations of the bazaar's information, you had an order removed that exceeded the maximum number of buyers/sellers. If you want, you can cancel the missing order freely and put it back up."));
-              BazaarNotifier.orders.remove(orderInQuestion);
+              BazaarTools.orders.remove(orderInQuestion);
             } else if (amountLeft > 0) {
-              BazaarNotifier.orders.getJSONObject(orderInQuestion)
+              BazaarTools.orders.getJSONObject(orderInQuestion)
                   .put("amountRemaining", amountLeft).put("orderValue", price * amountLeft);
             }
           }
         } else {
-          System.out.println(BazaarNotifier.orders);
+          System.out.println(BazaarTools.orders);
           System.err.println("Some orders weren't found! Bad display name: " + displayName);
           return;
         }
@@ -143,7 +143,7 @@ public class ChestTickHandler {
 
     for (int i = verifiedOrders.length - 1; i >= 0; i--) {
       if (verifiedOrders[i] == 0) {
-        BazaarNotifier.orders.remove(i);
+        BazaarTools.orders.remove(i);
       }
     }
   }
@@ -160,14 +160,14 @@ public class ChestTickHandler {
           chest.getStackInSlot(13).getTagCompound().getCompoundTag("display")
               .getTagList("Lore", 8).getStringTagAt(4)).split("x ")[1];
 
-      if (!BazaarNotifier.bazaarConversionsReversed
+      if (!BazaarTools.bazaarConversionsReversed
           .has(product)) {
         Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(
-            BazaarNotifier.prefix + EnumChatFormatting.RED
-                + "The bazaar item you just put an order for doesn't exist. Please report this in the discord server"));
+            BazaarTools.prefix + EnumChatFormatting.RED
+                + "The bazaar item you just put an order for doesn't exist. Please report this in the GitHub repo"));
 
       } else {
-        String productName = BazaarNotifier.bazaarConversionsReversed
+        String productName = BazaarTools.bazaarConversionsReversed
             .getString(product);
         String productWithAmount = StringUtils.stripControlCodes(
             chest.getStackInSlot(13).getTagCompound().getCompoundTag("display")

@@ -1,7 +1,7 @@
-package dev.meyi.bn.handlers;
+package dev.keebler408.bt.handlers;
 
-import dev.meyi.bn.BazaarNotifier;
-import dev.meyi.bn.utilities.Utils;
+import dev.keebler408.bt.BazaarTools;
+import dev.keebler408.bt.utilities.Utils;
 import java.math.BigDecimal;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -27,10 +27,10 @@ public class EventHandler {
         .stripString(StringUtils.stripControlCodes(e.message.getUnformattedText()));
     if (message.startsWith("Buy Order Setup!") || message.startsWith("Sell Offer Setup!")) {
       if (productVerify[0] != null && productVerify[1] != null && productVerify[0]
-          .equals(BazaarNotifier.bazaarConversionsReversed
+          .equals(BazaarTools.bazaarConversionsReversed
               .getString(message.split("x ", 2)[1].split(" for ")[0])) && productVerify[1]
           .equals(message.split("! ")[1].split(" for ")[0])) {
-        BazaarNotifier.orders.put(verify);
+        BazaarTools.orders.put(verify);
         verify = null;
         productVerify = new String[2];
       }
@@ -42,8 +42,8 @@ public class EventHandler {
       double edgePrice;
       if (message.startsWith("[Bazaar] Your Buy Order")) {
         edgePrice = Double.MIN_VALUE;
-        for (int i = 0; i < BazaarNotifier.orders.length(); i++) {
-          JSONObject order = BazaarNotifier.orders.getJSONObject(i);
+        for (int i = 0; i < BazaarTools.orders.length(); i++) {
+          JSONObject order = BazaarTools.orders.getJSONObject(i);
           if (order.getString("product").equalsIgnoreCase(item)
               && order.getInt("startAmount") == amount && order.getString("type").equals("buy")
               && order.getDouble("pricePerUnit") > edgePrice) {
@@ -54,8 +54,8 @@ public class EventHandler {
         }
       } else if (message.startsWith("[Bazaar] Your Sell Offer")) {
         edgePrice = Double.MAX_VALUE;
-        for (int i = 0; i < BazaarNotifier.orders.length(); i++) {
-          JSONObject order = BazaarNotifier.orders.getJSONObject(i);
+        for (int i = 0; i < BazaarTools.orders.length(); i++) {
+          JSONObject order = BazaarTools.orders.getJSONObject(i);
           if (order.getString("product").equalsIgnoreCase(item)
               && order.getInt("startAmount") == amount && order.getString("type").equals("sell")
               && order.getDouble("pricePerUnit") < edgePrice) {
@@ -67,13 +67,13 @@ public class EventHandler {
       }
       if (found) {
         // Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(
-        //    BazaarNotifier.prefix + EnumChatFormatting.GREEN + "An order was filled!"));
+        //    BazaarTools.prefix + EnumChatFormatting.GREEN + "An order was filled!"));
         // e.setCanceled(true);
-        BazaarNotifier.orders.remove(orderToRemove);
+        BazaarTools.orders.remove(orderToRemove);
       } else {
         /*
         Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(
-            BazaarNotifier.prefix + EnumChatFormatting.RED
+            BazaarTools.prefix + EnumChatFormatting.RED
                 + "For some reason, you have an order that didn't successfully delete when filled! This message might be bugged. If all your orders are fine, ignore this message."));
       */
       }
@@ -92,19 +92,19 @@ public class EventHandler {
             .parseInt(message.split("Refunded ")[1].split("x ", 2)[0].replaceAll(",", ""));
         itemRefunded = message.split("x ", 2)[1].split(" from")[0];
       }
-      for (int i = 0; i < BazaarNotifier.orders.length(); i++) {
-        JSONObject order = BazaarNotifier.orders.getJSONObject(i);
+      for (int i = 0; i < BazaarTools.orders.length(); i++) {
+        JSONObject order = BazaarTools.orders.getJSONObject(i);
         if (message.endsWith("buy order!") && order.getString("type").equals("buy")) {
           if (BigDecimal.valueOf(refund >= 10000 ? Math.round(order.getDouble("orderValue"))
               : order.getDouble("orderValue"))
               .compareTo(BigDecimal.valueOf(refund)) == 0) {
-            BazaarNotifier.orders.remove(i);
+            BazaarTools.orders.remove(i);
             break;
           }
         } else if (message.endsWith("sell offer!") && order.getString("type").equals("sell")) {
           if (order.getString("product").equalsIgnoreCase(itemRefunded)
               && order.getInt("amountRemaining") == refundAmount) {
-            BazaarNotifier.orders.remove(i);
+            BazaarTools.orders.remove(i);
             break;
           }
         }
@@ -117,7 +117,7 @@ public class EventHandler {
 
   @SubscribeEvent
   public void menuOpenedEvent(GuiOpenEvent e) {
-    if (e.gui instanceof GuiChest && (BazaarNotifier.validApiKey || BazaarNotifier.apiKeyDisabled)
+    if (e.gui instanceof GuiChest && (BazaarTools.validApiKey || BazaarTools.apiKeyDisabled)
         && ((((GuiChest) e.gui).lowerChestInventory.hasCustomName() && (Utils
         .stripString(((GuiChest) e.gui).lowerChestInventory.getDisplayName().getUnformattedText())
         .startsWith("Bazaar") || Utils
@@ -126,32 +126,32 @@ public class EventHandler {
         .stripString(((GuiChest) e.gui).lowerChestInventory.getDisplayName().getUnformattedText())
         .matches("Confirm (Buy|Sell) (Order|Offer)")) || Utils
         .stripString(((GuiChest) e.gui).lowerChestInventory.getDisplayName().getUnformattedText())
-        .contains("Bazaar")) || BazaarNotifier.forceRender)) {
-      if (!BazaarNotifier.inBazaar) {
-        BazaarNotifier.inBazaar = true;
+        .contains("Bazaar")) || BazaarTools.forceRender)) {
+      if (!BazaarTools.inBazaar) {
+        BazaarTools.inBazaar = true;
       }
     }
-    if (e.gui == null && BazaarNotifier.inBazaar) {
-      BazaarNotifier.inBazaar = false;
+    if (e.gui == null && BazaarTools.inBazaar) {
+      BazaarTools.inBazaar = false;
     }
   }
 
   @SubscribeEvent
   public void disconnectEvent(ClientDisconnectionFromServerEvent e) {
-    BazaarNotifier.inBazaar = false;
+    BazaarTools.inBazaar = false;
   }
 
   @SubscribeEvent
   public void renderBazaarEvent(BackgroundDrawnEvent e) {
-    if (BazaarNotifier.inBazaar) {
-      BazaarNotifier.modules.drawAllModules();
+    if (BazaarTools.inBazaar) {
+      BazaarTools.modules.drawAllModules();
     }
   }
 
   @SubscribeEvent
   public void renderOutlines(RenderGameOverlayEvent.Post e) {
-    if (BazaarNotifier.inBazaar) {
-      BazaarNotifier.modules.drawAllOutlines();
+    if (BazaarTools.inBazaar) {
+      BazaarTools.modules.drawAllOutlines();
     }
   }
 }

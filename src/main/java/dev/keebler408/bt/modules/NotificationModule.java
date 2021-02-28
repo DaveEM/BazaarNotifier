@@ -1,9 +1,9 @@
-package dev.meyi.bn.modules;
+package dev.keebler408.bt.modules;
 
-import dev.meyi.bn.BazaarNotifier;
-import dev.meyi.bn.utilities.ColorUtils;
-import dev.meyi.bn.utilities.Defaults;
-import dev.meyi.bn.utilities.Utils;
+import dev.keebler408.bt.BazaarTools;
+import dev.keebler408.bt.utilities.ColorUtils;
+import dev.keebler408.bt.utilities.Defaults;
+import dev.keebler408.bt.utilities.Utils;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -28,12 +28,12 @@ public class NotificationModule extends Module {
 
     List<LinkedHashMap<String, Color>> items = new ArrayList<>();
 
-    if (BazaarNotifier.orders.length() != 0) {
+    if (BazaarTools.orders.length() != 0) {
 
-      int size = Math.min(shift + 10, BazaarNotifier.orders.length());
+      int size = Math.min(shift + 10, BazaarTools.orders.length());
 
       for (int i = shift; i < size; i++) {
-        JSONObject currentOrder = BazaarNotifier.orders.getJSONObject(i);
+        JSONObject currentOrder = BazaarTools.orders.getJSONObject(i);
         LinkedHashMap<String, Color> message = new LinkedHashMap<>();
 
         Color typeSpecificColor = currentOrder.getBoolean("goodOrder") ? new Color(0x55FF55)
@@ -46,12 +46,12 @@ public class NotificationModule extends Module {
         message.put(" - ", new Color(0xAAAAAA));
         message.put(notification + " ", new Color(0xFFFF55));
         message.put("(", new Color(0xAAAAAA));
-        message.put(BazaarNotifier.dfNoDecimal.format(currentOrder.getInt("startAmount")),
+        message.put(BazaarTools.dfNoDecimal.format(currentOrder.getInt("startAmount")),
             typeSpecificColor);
         message.put("x ", new Color(0xAAAAAA));
         message.put(currentOrder.getString("product"), typeSpecificColor);
         message.put(", ", new Color(0xAAAAAA));
-        message.put(BazaarNotifier.df.format(currentOrder.getDouble("pricePerUnit")),
+        message.put(BazaarTools.df.format(currentOrder.getDouble("pricePerUnit")),
             typeSpecificColor);
         message.put(")", new Color(0xAAAAAA));
         items.add(message);
@@ -86,7 +86,7 @@ public class NotificationModule extends Module {
 
   @Override
   protected int getMaxShift() {
-    return BazaarNotifier.orders.length() - 10;
+    return BazaarTools.orders.length() - 10;
   }
 
 }

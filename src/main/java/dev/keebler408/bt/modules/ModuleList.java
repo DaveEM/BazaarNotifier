@@ -1,7 +1,7 @@
-package dev.meyi.bn.modules;
+package dev.keebler408.bt.modules;
 
-import dev.meyi.bn.BazaarNotifier;
-import dev.meyi.bn.utilities.Utils;
+import dev.keebler408.bt.BazaarTools;
+import dev.keebler408.bt.utilities.Utils;
 import java.util.ArrayList;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -17,9 +17,9 @@ public class ModuleList extends ArrayList<Module> {
   }
 
   public ModuleList(JSONObject config) {
-    BazaarNotifier.apiKey = config.getString("api");
+    BazaarTools.apiKey = config.getString("api");
     JSONObject workingConfig;
-    if (!config.getString("version").equalsIgnoreCase(BazaarNotifier.VERSION)) {
+    if (!config.getString("version").equalsIgnoreCase(BazaarTools.VERSION)) {
       workingConfig = Utils.initializeConfig();
     } else {
       workingConfig = config;
@@ -112,8 +112,8 @@ public class ModuleList extends ArrayList<Module> {
   }
 
   public JSONObject generateConfig() {
-    JSONObject o = new JSONObject().put("api", BazaarNotifier.apiKey)
-        .put("version", BazaarNotifier.VERSION);
+    JSONObject o = new JSONObject().put("api", BazaarTools.apiKey)
+        .put("version", BazaarTools.VERSION);
 
     JSONArray modules = new JSONArray();
     for (Module m : this) {

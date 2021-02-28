@@ -1,6 +1,6 @@
-package dev.meyi.bn.utilities;
+package dev.keebler408.bt.utilities;
 
-import dev.meyi.bn.BazaarNotifier;
+import dev.keebler408.bt.BazaarTools;
 import java.util.Iterator;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -9,8 +9,8 @@ public class Suggester {
 
   public static void basic() {
     try {
-      if (BazaarNotifier.validApiKey || BazaarNotifier.apiKeyDisabled) {
-        JSONObject bazaarData = BazaarNotifier.bazaarDataRaw;
+      if (BazaarTools.validApiKey || BazaarTools.apiKeyDisabled) {
+        JSONObject bazaarData = BazaarTools.bazaarDataRaw;
         Iterator<String> bazaarKeys = bazaarData.keys();
         JSONArray bazaarDataFormatted = new JSONArray();
 
@@ -18,12 +18,12 @@ public class Suggester {
           String key = bazaarKeys.next();
           JSONObject product = bazaarData.getJSONObject(key);
 
-          if (!BazaarNotifier.bazaarConversions.has(key)) {
-            BazaarNotifier.bazaarConversions.put(key, key);
-            BazaarNotifier.bazaarConversionsReversed.put(key, key);
+          if (!BazaarTools.bazaarConversions.has(key)) {
+            BazaarTools.bazaarConversions.put(key, key);
+            BazaarTools.bazaarConversionsReversed.put(key, key);
           }
           JSONObject currentProduct = new JSONObject()
-              .put("productId", BazaarNotifier.bazaarConversions.getString(key))
+              .put("productId", BazaarTools.bazaarConversions.getString(key))
               .put("sellOfferPrice",
                   (product.getJSONArray("buy_summary").length() > 0
                       && product.getJSONArray("sell_summary").length() > 0) ?
@@ -61,8 +61,8 @@ public class Suggester {
           bazaarCache.put(jsonData.getString("productId").toLowerCase(), data);
         });
 
-        BazaarNotifier.bazaarCache = bazaarCache;
-        BazaarNotifier.bazaarDataFormatted = bazaarDataFormatted;
+        BazaarTools.bazaarCache = bazaarCache;
+        BazaarTools.bazaarDataFormatted = bazaarDataFormatted;
       }
     } catch (Exception e) {
       e.printStackTrace();

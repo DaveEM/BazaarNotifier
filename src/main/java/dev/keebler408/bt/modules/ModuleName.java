@@ -1,4 +1,4 @@
-package dev.meyi.bn.modules;
+package dev.keebler408.bt.modules;
 
 public enum ModuleName {
   SUGGESTION, BANK, NOTIFICATION;

@@ -1,14 +1,14 @@
-package dev.meyi.bn;
+package dev.keebler408.bn;
 
-import dev.meyi.bn.commands.BazaarNotifierCommand;
-import dev.meyi.bn.handlers.ChestTickHandler;
-import dev.meyi.bn.handlers.EventHandler;
-import dev.meyi.bn.handlers.MouseHandler;
-import dev.meyi.bn.handlers.UpdateHandler;
-import dev.meyi.bn.modules.ModuleList;
-import dev.meyi.bn.utilities.Defaults;
-import dev.meyi.bn.utilities.ScheduledEvents;
-import dev.meyi.bn.utilities.Utils;
+import dev.keebler408.bt.commands.BazaarToolsCommand;
+import dev.keebler408.bt.handlers.ChestTickHandler;
+import dev.keebler408.bt.handlers.EventHandler;
+import dev.keebler408.bt.handlers.MouseHandler;
+import dev.keebler408.bt.handlers.UpdateHandler;
+import dev.keebler408.bt.modules.ModuleList;
+import dev.keebler408.bt.utilities.Defaults;
+import dev.keebler408.bt.utilities.ScheduledEvents;
+import dev.keebler408.bt.utilities.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,10 +24,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-@Mod(modid = BazaarNotifier.MODID, version = BazaarNotifier.VERSION)
-public class BazaarNotifier {
+@Mod(modid = BazaarTools.MODID, version = BazaarTools.VERSION)
+public class BazaarTools {
 
-  public static final String MODID = "BazaarNotifier";
+  public static final String MODID = "BazaarTools";
   public static final String VERSION = "1.3.9";
   public static final String prefix =
       EnumChatFormatting.GOLD + "[" + EnumChatFormatting.YELLOW + "BN" + EnumChatFormatting.GOLD + "] " + EnumChatFormatting.RESET;
@@ -48,9 +48,9 @@ public class BazaarNotifier {
   public static JSONArray bazaarDataFormatted = new JSONArray();
 
   public static JSONObject bazaarConversions = new JSONObject(
-      new JSONTokener(BazaarNotifier.class.getResourceAsStream("/bazaarConversions.json")));
+      new JSONTokener(BazaarTools.class.getResourceAsStream("/bazaarConversions.json")));
   public static JSONObject bazaarConversionsReversed = new JSONObject(
-      new JSONTokener(BazaarNotifier.class.getResourceAsStream("/bazaarConversionsReversed.json")));
+      new JSONTokener(BazaarTools.class.getResourceAsStream("/bazaarConversionsReversed.json")));
 
   public static File configFile;
 
@@ -88,7 +88,7 @@ public class BazaarNotifier {
     MinecraftForge.EVENT_BUS.register(new ChestTickHandler());
     MinecraftForge.EVENT_BUS.register(new MouseHandler());
     MinecraftForge.EVENT_BUS.register(new UpdateHandler());
-    ClientCommandHandler.instance.registerCommand(new BazaarNotifierCommand());
+    ClientCommandHandler.instance.registerCommand(new BazaarToolsCommand());
     ScheduledEvents.create();
 
     Runtime.getRuntime()

@@ -21,14 +21,14 @@ compileJava {
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
 }
-version = "1.3.9"
-group = "dev.meyi.bn"
-archivesBaseName = "BazaarNotifier"
+version = "1.0.0"
+group = "dev.keebler408.bn"
+archivesBaseName = "BazaarTools"
 
 minecraft {
     version = "1.8.9-11.15.1.2318-1.8.9"
     runDir = "run"
-    mappings = "stable_20"
+    mappings = "stable_22"
 }
 
 dependencies {
@@ -37,7 +37,7 @@ dependencies {
 
 jar {
     manifest {
-        attributes 'FMLAT': 'BazaarNotifier_at.cfg'
+        attributes 'FMLAT': 'BazaarTools_at.cfg'
     }
 }
 
@@ -58,7 +58,7 @@ processResources
 shadowJar {
     classifier = ""
 
-    relocate "org.json", "dev.meyi.repack.org.json"
+    relocate "org.json", "dev.keebler408.repack.org.json"
 }
 
 reobf { shadowJar { mappingType = "SEARGE" } }

@@ -1,6 +1,6 @@
-package dev.meyi.bn.utilities;
+package dev.keebler408.bt.utilities;
 
-import dev.meyi.bn.BazaarNotifier;
+import dev.keebler408.bt.BazaarTools;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import net.minecraft.client.Minecraft;
@@ -33,20 +33,20 @@ public class ScheduledEvents {
       if (!inOutdatedRequest) {
         inOutdatedRequest = true;
         try {
-          if (BazaarNotifier.activeBazaar && (BazaarNotifier.validApiKey || BazaarNotifier.apiKeyDisabled)) {
-            BazaarNotifier.bazaarDataRaw = Utils.getBazaarData();
-            if (BazaarNotifier.orders.length() > 0) {
-              for (int i = 0; i < BazaarNotifier.orders.length(); i++) {
-                JSONObject currentOrder = BazaarNotifier.orders.getJSONObject(i);
-                String key = BazaarNotifier.bazaarConversionsReversed
+          if (BazaarTools.activeBazaar && (BazaarTools.validApiKey || BazaarTools.apiKeyDisabled)) {
+            BazaarTools.bazaarDataRaw = Utils.getBazaarData();
+            if (BazaarTools.orders.length() > 0) {
+              for (int i = 0; i < BazaarTools.orders.length(); i++) {
+                JSONObject currentOrder = BazaarTools.orders.getJSONObject(i);
+                String key = BazaarTools.bazaarConversionsReversed
                     .getString(currentOrder.getString("product"));
                 double price = currentOrder.getDouble("pricePerUnit");
                 if (currentOrder.getString("type").equals("buy")) {
                   double diff =
-                      BazaarNotifier.bazaarDataRaw.getJSONObject(key).getJSONArray("sell_summary")
+                      BazaarTools.bazaarDataRaw.getJSONObject(key).getJSONArray("sell_summary")
                           .getJSONObject(0)
                           .getDouble("pricePerUnit") - price;
-                  if (BazaarNotifier.bazaarDataRaw.getJSONObject(key).getJSONArray("sell_summary")
+                  if (BazaarTools.bazaarDataRaw.getJSONObject(key).getJSONArray("sell_summary")
                       .getJSONObject(0).getInt("orders") != 1 && diff == 0
                       && !currentOrder.getBoolean("matchedOrder")) {
                     currentOrder.put("matchedOrder", true).put("outdatedOrder", false)
@@ -63,7 +63,7 @@ public class ScheduledEvents {
                         .put("goodOrder", false)
                         .put("currentNotification", "OUTDATED");
                   } else if (diff == 0 &&
-                      BazaarNotifier.bazaarDataRaw.getJSONObject(key).getJSONArray("sell_summary")
+                      BazaarTools.bazaarDataRaw.getJSONObject(key).getJSONArray("sell_summary")
                           .getJSONObject(0).getInt("orders") == 1) {
                     if (currentOrder.getBoolean("outdatedOrder") || currentOrder
                         .getBoolean("matchedOrder")) {
@@ -74,11 +74,11 @@ public class ScheduledEvents {
                         .put("goodOrder", true);
                   }
                 } else {
-                  double diff = price - BazaarNotifier.bazaarDataRaw.getJSONObject(key)
+                  double diff = price - BazaarTools.bazaarDataRaw.getJSONObject(key)
                       .getJSONArray("buy_summary")
                       .getJSONObject(0)
                       .getDouble("pricePerUnit");
-                  if (BazaarNotifier.bazaarDataRaw.getJSONObject(key).getJSONArray("buy_summary")
+                  if (BazaarTools.bazaarDataRaw.getJSONObject(key).getJSONArray("buy_summary")
                       .getJSONObject(0).getInt("orders") != 1 && diff == 0 && !currentOrder
                       .getBoolean("matchedOrder")) {
                     currentOrder.put("matchedOrder", true).put("outdatedOrder", false)
@@ -95,7 +95,7 @@ public class ScheduledEvents {
                         .addChatMessage(
                             Utils.chatNotification(key, price, i, "Sell Offer", "OUTDATED"));
                   } else if (diff == 0
-                      && BazaarNotifier.bazaarDataRaw.getJSONObject(key).getJSONArray("buy_summary")
+                      && BazaarTools.bazaarDataRaw.getJSONObject(key).getJSONArray("buy_summary")
                       .getJSONObject(0).getInt("orders") == 1) {
                     if (currentOrder.getBoolean("outdatedOrder") || currentOrder
                         .getBoolean("matchedOrder")) {

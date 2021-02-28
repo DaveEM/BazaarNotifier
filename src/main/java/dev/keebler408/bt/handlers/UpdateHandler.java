@@ -1,7 +1,7 @@
-package dev.meyi.bn.handlers;
+package dev.keebler408.bt.handlers;
 
-import dev.meyi.bn.BazaarNotifier;
-import dev.meyi.bn.utilities.Utils;
+import dev.keebler408.bt.BazaarTools;
+import dev.keebler408.bt.utilities.Utils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,17 +32,17 @@ public class UpdateHandler {
           JSONObject json = new JSONObject(IOUtils.toString(new BufferedReader
               (new InputStreamReader(
                   HttpClientBuilder.create().build().execute(new HttpGet(
-                      "https://api.github.com/repos/symt/BazaarNotifier/releases/latest"))
+                      "https://api.github.com/repos/symt/BazaarTools/releases/latest"))
                       .getEntity().getContent()))));
           String[] latestTag = json.getString("tag_name").split("\\.");
-          String[] currentTag = BazaarNotifier.VERSION.split("\\.");
+          String[] currentTag = BazaarTools.VERSION.split("\\.");
 
           if (latestTag.length == 3 && currentTag.length == 3) {
             for (int i = 0; i < latestTag.length; i++) {
               if (latestTag[i].compareTo(currentTag[i]) != 0) {
                 if (latestTag[i].compareTo(currentTag[i]) <= -1) {
                   Minecraft.getMinecraft().thePlayer.addChatMessage(
-                      new ChatComponentText(BazaarNotifier.prefix + EnumChatFormatting.RED
+                      new ChatComponentText(BazaarTools.prefix + EnumChatFormatting.RED
                           + "This version hasn't been released yet. Please report any bugs that you come across."));
                 } else if (latestTag[i].compareTo(currentTag[i]) >= 1) {
                   ChatComponentText updateLink = new ChatComponentText(
@@ -51,9 +51,9 @@ public class UpdateHandler {
                   updateLink
                       .setChatStyle(updateLink.getChatStyle().setChatClickEvent(new ClickEvent(
                           Action.OPEN_URL,
-                          "https://github.com/symt/BazaarNotifier/releases/latest")));
+                          "https://github.com/symt/BazaarTools/releases/latest")));
                   Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(
-                      BazaarNotifier.prefix + EnumChatFormatting.RED
+                      BazaarTools.prefix + EnumChatFormatting.RED
                           + "The mod version that you're on is outdated. Please update for the best profits: ")
                       .appendSibling(updateLink));
                 }
@@ -61,10 +61,10 @@ public class UpdateHandler {
               }
             }
           }
-          BazaarNotifier.validApiKey = Utils.validateApiKey();
-          if (!BazaarNotifier.validApiKey && !BazaarNotifier.apiKeyDisabled) {
+          BazaarTools.validApiKey = Utils.validateApiKey();
+          if (!BazaarTools.validApiKey && !BazaarTools.apiKeyDisabled) {
             Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(
-                BazaarNotifier.prefix + EnumChatFormatting.RED
+                BazaarTools.prefix + EnumChatFormatting.RED
                     + "The mod doesn't have access to a valid api key yet. Please run /bn api (key) to set your key"));
           }
         } catch (IOException e) {

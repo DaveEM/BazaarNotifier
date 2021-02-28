@@ -1,4 +1,4 @@
-package dev.meyi.bn.modules;
+package dev.keebler408.bt.modules;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;

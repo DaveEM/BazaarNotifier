@@ -1,6 +1,6 @@
-package dev.meyi.bn.modules;
+package dev.keebler408.bt.modules;
 
-import dev.meyi.bn.utilities.Defaults;
+import dev.keebler408.bt.utilities.Defaults;
 import org.json.JSONObject;
 
 public class BankModule extends Module {
